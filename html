@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض وحفظ صورة العضوية أو الغرفة</title>
+    <style>
+        body, html {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            border: 3px solid #4CAF50;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: #fff;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+‎        /* رأس الصفحة */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        #logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        #time {
+            font-size: 1em;
+            color: #333;
+        }
+
+        #hijri-date {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+‎        /* النص المتحرك */
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .letter-animation span {
+            display: inline-block;
+            opacity: 0;
+            animation: fadeInOutColor 3s infinite;
+        }
+
+        @keyframes fadeInOutColor {
+            0% { opacity: 0; color: #4CAF50; }
+            25% { opacity: 1; color: #FF5733; }
+            50% { opacity: 1; color: #FFD700; }
+            75% { opacity: 1; color: #3333FF; }
+            100% { opacity: 0; color: #4CAF50; }
+        }
+
+‎        /* تأخير زمني لكل حرف */
+        .letter-animation span:nth-child(1) { animation-delay: 0s; }
+        .letter-animation span:nth-child(2) { animation-delay: 0.1s; }
+        .letter-animation span:nth-child(3) { animation-delay: 0.2s; }
+        .letter-animation span:nth-child(4) { animation-delay: 0.3s; }
+        .letter-animation span:nth-child(5) { animation-delay: 0.4s; }
+        .letter-animation span:nth-child(6) { animation-delay: 0.5s; }
+        .letter-animation span:nth-child(7) { animation-delay: 0.6s; }
+        .letter-animation span:nth-child(8) { animation-delay: 0.7s; }
+        .letter-animation span:nth-child(9) { animation-delay: 0.8s; }
+
+‎        /* تنسيق الأزرار والحقول */
+        form {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 1em;
+            color: #333;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 22px);
+            font-size: 0.9em;
+            box-sizing: border-box;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #saveButton {
+            background-color: #FFD700;
+            color: black;
+        }
+
+        #saveButton:hover {
+            background-color: #FFC300;
+        }
+
+‎        /* منطقة عرض الصورة */
+        #imageContainer {
+            margin-top: 20px;
+            border: 2px solid #ddd;
+            padding: 10px;
+            width: 100%;
+            max-width: 320px;
+            height: 100%;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        #resultImage {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        #noImageText {
+            color: #777;
+            font-size: 1em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+‎        <!-- رأس الصفحة: الشعار في الوسط، الوقت على اليمين والتاريخ على اليسار -->
+        <div class="header">
+            <div id="hijri-date">التاريخ الهجري</div>
+            <img id="logo" src="https://palringo.com/avatar.php?id=28044260&size=214" alt="شعار الصفحة">
+            <div id="time">00:00:00</div>
+        </div>
+
+‎        <!-- النص المتحرك -->
+        <p class="letter-animation">
+            <span>🥃</span><span>‏‏┊‏‏</span><span>ᴝ</span><span>g</span><span>Ը</span><span>ɹ</span><span>ɹ</span><span>ɹ</span>
+        </p>
+
+‎        <!-- حقل الاختيار مباشرة تحت النص المتحرك -->
+        <div class="row">
+            <label><input type="radio" name="id_type" value="membership" required> عضوية</label>
+            <label><input type="radio" name="id_type" value="room" required> غرفة</label>
+        </div>
+
+‎        <!-- نموذج الإدخال وحقل الرقم والأزرار -->
+        <form id="imageForm">
+            <input type="text" id="number" placeholder="أدخل الرقم هنا" required>
+            <div class="button-group">
+                <button type="submit">عرض</button>
+                <button type="button" id="saveButton" style="display: none;">حفظ</button>
+            </div>
+        </form>
+        
+‎        <!-- منطقة عرض الصورة -->
+        <div id="imageContainer">
+            <img id="resultImage" alt="سيتم عرض الصورة هنا">
+            <p id="noImageText">لا يوجد صورة</p>
+        </div>
+    </div>
+
+    <script>
+‎        // دالة لتحديث الوقت والتاريخ الهجري
+        function updateTime() {
+            const now = new Date();
+
+‎            // ضبط المنطقة الزمنية لتوقيت السعودية
+            const options = { timeZone: 'Asia/Riyadh', hour12: false };
+            const timeString = now.toLocaleTimeString('ar-EG', options);
+
+            document.getElementById('time').textContent = timeString;
+
+‎            // التاريخ الهجري بالأشهر الرقمية
+            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {
+                day: 'numeric', month: 'numeric', year: 'numeric'
+            }).format(now);
+
+            document.getElementById('hijri-date').textContent = hijriDate;
+        }
+
+‎        // تحديث الوقت كل ثانية
+        setInterval(updateTime, 1000);
+        updateTime();
+
+‎        // كود JavaScript لعرض الصورة وحفظها
+        document.addEventListener("DOMContentLoaded", function() {
+            const resultImage = document.getElementById("resultImage");
+            const saveButton = document.getElementById("saveButton");
+            const noImageText = document.getElementById("noImageText");
+
+            document.getElementById("imageForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const idType = document.querySelector('input[name="id_type"]:checked').value;
+                const number = document.getElementById("number").value;
+
+                if (!number) {
+                    alert("يرجى إدخال الرقم.");
+                    return;
+                }
+
+                let fileUrl = "";
+                if (idType === "membership") {
+                    fileUrl = `https://www.palringo.com/avatar.php?id=${number}&size=214`;
+                } else if (idType === "room") {
+                    fileUrl = `https://www.palringo.com/avatar.php?id=${number}&type=g&size=large`;
+                }
+
+‎                // إعداد الصورة
+                resultImage.src = fileUrl;
+                resultImage.style.display = "block";
+                saveButton.style.display = "inline-block";
+                noImageText.style.display = "none";
+
+                resultImage.onerror = function() {
+                    resultImage.style.display = "none";
+                    saveButton.style.display = "none";
+                    noImageText.style.display = "block";
+                };
+            });
+
+            document.getElementById("number").addEventListener("input", function(event) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            saveButton.addEventListener("click", function() {
+                const link = document.createElement("a");
+                link.href = resultImage.src;
+                link.download = "avatar.png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        });
+    </script>
+</body>
+</html>
